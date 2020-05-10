@@ -2,13 +2,14 @@
 # since it depends on service name and namespace that are out of this kustomize package.
 # It should be run by config/default
 resources:
-- bases/execution.experimental.securecodebox.io_scans.yaml
-- bases/execution.experimental.securecodebox.io_scantypes.yaml
-- bases/execution.experimental.securecodebox.io_scancompletionhooks.yaml
-- bases/execution.experimental.securecodebox.io_parsedefinitions.yaml
-- bases/execution.experimental.securecodebox.io_scheduledscans.yaml
-- bases/targets.experimental.securecodebox.io_hosts.yaml
-- bases/cascading.experimental.securecodebox.io_cascadingrules.yaml
+  - bases/execution.experimental.securecodebox.io_scans.yaml
+  - bases/execution.experimental.securecodebox.io_scantypes.yaml
+  - bases/execution.experimental.securecodebox.io_scancompletionhooks.yaml
+  - bases/execution.experimental.securecodebox.io_parsedefinitions.yaml
+  - bases/execution.experimental.securecodebox.io_scheduledscans.yaml
+  - bases/targets.experimental.securecodebox.io_hosts.yaml
+  - bases/cascading.experimental.securecodebox.io_cascadingrules.yaml
+  - bases/targets.experimental.securecodebox.io_containerimages.yaml
 # +kubebuilder:scaffold:crdkustomizeresource
 
 patchesStrategicMerge:
@@ -21,6 +22,7 @@ patchesStrategicMerge:
 #- patches/webhook_in_scheduledscans.yaml
 #- patches/webhook_in_hosts.yaml
 #- patches/webhook_in_cascadingrules.yaml
+#- patches/webhook_in_containerimages.yaml
 # +kubebuilder:scaffold:crdkustomizewebhookpatch
 
 # [CERTMANAGER] To enable webhook, uncomment all the sections with [CERTMANAGER] prefix.
@@ -32,8 +34,9 @@ patchesStrategicMerge:
 #- patches/cainjection_in_scheduledscans.yaml
 #- patches/cainjection_in_hosts.yaml
 #- patches/cainjection_in_cascadingrules.yaml
+#- patches/cainjection_in_containerimages.yaml
 # +kubebuilder:scaffold:crdkustomizecainjectionpatch
 
 # the following config is for teaching kustomize how to do kustomization for CRDs.
 configurations:
-- kustomizeconfig.yaml
+  - kustomizeconfig.yaml

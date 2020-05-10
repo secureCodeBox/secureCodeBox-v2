@@ -47,6 +47,7 @@ type HostReconciler struct {
 	Scheme *runtime.Scheme
 }
 
+// ScanTemplates is an intermediate representation defining how to scan certain ports / services
 type ScanTemplates struct {
 	Port     int32
 	Type     string

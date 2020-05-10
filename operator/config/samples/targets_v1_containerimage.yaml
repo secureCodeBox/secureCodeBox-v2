@@ -1,0 +1,6 @@
+apiVersion: targets.experimental.securecodebox.io/v1
+kind: ContainerImage
+metadata:
+  name: juice-shop
+spec:
+  image: bkimminich/juice-shop:v10.2.0

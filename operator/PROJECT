@@ -22,5 +22,7 @@ resources:
   version: v1
 - group: cascading
   kind: CascadingRule
+- group: targets
+  kind: ContainerImage
   version: v1
 version: "2"

@@ -403,7 +403,7 @@ jobs:
           kubectl -n integration-tests get scan -o wide
           kubectl -n integration-tests get jobs -o wide
           kubectl -n integration-tests get pods -o wide
-      - name: "Inspect Operator"
+      - name: "Inspect Operator Post Failure"
         if: failure()
         run: |
           echo "Deployment in namespace 'securecodebox-system'"

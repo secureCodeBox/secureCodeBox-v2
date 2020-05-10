@@ -1,0 +1,101 @@
+
+---
+apiVersion: apiextensions.k8s.io/v1beta1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.2.4
+  creationTimestamp: null
+  name: containerimages.targets.experimental.securecodebox.io
+spec:
+  additionalPrinterColumns:
+  - JSONPath: .spec.image
+    name: Image
+    type: string
+  - JSONPath: .status.findings.count
+    description: Total Finding Count
+    name: Findings
+    type: string
+  group: targets.experimental.securecodebox.io
+  names:
+    kind: ContainerImage
+    listKind: ContainerImageList
+    plural: containerimages
+    singular: containerimage
+  scope: Namespaced
+  subresources:
+    status: {}
+  validation:
+    openAPIV3Schema:
+      description: ContainerImage is the Schema for the containerimages API
+      properties:
+        apiVersion:
+          description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+          type: string
+        kind:
+          description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+          type: string
+        metadata:
+          type: object
+        spec:
+          description: ContainerImageSpec defines the desired state of ContainerImage
+          properties:
+            image:
+              description: Foo is an example field of ContainerImage. Edit ContainerImage_types.go
+                to remove/update
+              type: string
+          type: object
+        status:
+          description: ContainerImageStatus defines the observed state of ContainerImage
+          properties:
+            findings:
+              description: FindingStats contains the general stats about the results
+                of the scan
+              properties:
+                categories:
+                  additionalProperties:
+                    format: int64
+                    type: integer
+                  description: FindingCategories indicates the count of finding broken
+                    down by their categories
+                  type: object
+                count:
+                  description: Count indicates how many findings were identified in
+                    total
+                  format: int64
+                  type: integer
+                severities:
+                  description: FindingSeverities indicates the count of finding with
+                    the respective severity
+                  properties:
+                    high:
+                      format: int64
+                      type: integer
+                    informational:
+                      format: int64
+                      type: integer
+                    low:
+                      format: int64
+                      type: integer
+                    medium:
+                      format: int64
+                      type: integer
+                  type: object
+              type: object
+          type: object
+      type: object
+  version: v1
+  versions:
+  - name: v1
+    served: true
+    storage: true
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []

@@ -540,7 +540,7 @@ func (r *ScanReconciler) constructJobForScan(scan *executionv1.Scan, scanType *e
 	if podAnnotations == nil {
 		podAnnotations = make(map[string]string)
 	}
-	podAnnotations["experimental.securecodebox.io/job-type"] = "scanner"
+	podAnnotations["auto-discovery.experimental.securecodebox.io/ignore"] = "true"
 	job.Spec.Template.Annotations = podAnnotations
 
 	job.Spec.Template.Spec.ServiceAccountName = "lurcher"

@@ -63,7 +63,7 @@ func (r *IngressScanReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 		return ctrl.Result{}, client.IgnoreNotFound(err)
 	}
 
-	err := r.CreateOrUpdateTlsForHosts(ingress)
+	err := r.createOrUpdateTLSForHosts(ingress)
 	if err != nil {
 		return ctrl.Result{}, err
 	}
@@ -71,7 +71,7 @@ func (r *IngressScanReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 	return ctrl.Result{}, nil
 }
 
-func (r *IngressScanReconciler) CreateOrUpdateTlsForHosts(ingress networking.Ingress) error {
+func (r *IngressScanReconciler) createOrUpdateTLSForHosts(ingress networking.Ingress) error {
 	if ingress.Spec.TLS == nil {
 		return nil
 	}
@@ -171,28 +171,16 @@ func (r *IngressScanReconciler) SetupWithManager(mgr ctrl.Manager) error {
 
 	isInDemoNamespaceFilter := predicate.Funcs{
 		CreateFunc: func(event event.CreateEvent) bool {
-			if val, ok := event.Meta.GetAnnotations()["auto-discovery.experimental.securecodebox.io/ignore"]; ok && val == "true" {
-				return false
-			}
-			return event.Meta.GetNamespace() == "juice-shop" || event.Meta.GetNamespace() == "bodgeit"
+			return false
 		},
 		DeleteFunc: func(event event.DeleteEvent) bool {
-			if val, ok := event.Meta.GetAnnotations()["auto-discovery.experimental.securecodebox.io/ignore"]; ok && val == "true" {
-				return false
-			}
-			return event.Meta.GetNamespace() == "juice-shop" || event.Meta.GetNamespace() == "bodgeit"
+			return false
 		},
 		UpdateFunc: func(event event.UpdateEvent) bool {
-			if val, ok := event.MetaNew.GetAnnotations()["auto-discovery.experimental.securecodebox.io/ignore"]; ok && val == "true" {
-				return false
-			}
-			return event.MetaNew.GetNamespace() == "juice-shop" || event.MetaNew.GetNamespace() == "bodgeit"
+			return false
 		},
 		GenericFunc: func(event event.GenericEvent) bool {
-			if val, ok := event.Meta.GetAnnotations()["auto-discovery.experimental.securecodebox.io/ignore"]; ok && val == "true" {
-				return false
-			}
-			return event.Meta.GetNamespace() == "juice-shop" || event.Meta.GetNamespace() == "bodgeit"
+			return false
 		},
 	}
 

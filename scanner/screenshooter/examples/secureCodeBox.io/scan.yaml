@@ -1,0 +1,11 @@
+apiVersion: "execution.experimental.securecodebox.io/v1"
+kind: Scan
+metadata:
+  name: "screenshot-securecodebox.io"
+  labels:
+    organization: "secureCodeBox"
+spec:
+  scanType: "screenshooter"
+  parameters:
+    - "--url"
+    - "https://www.securecodebox.io"

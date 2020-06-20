@@ -71,6 +71,10 @@ spec:
           properties:
             errorDescription:
               type: string
+            findingDownloadLink:
+              description: FindingDownloadLink link to download the finding json file
+                from. Valid for 7 days
+              type: string
             findings:
               description: FindingStats contains the general stats about the results
                 of the scan
@@ -105,6 +109,10 @@ spec:
                       type: integer
                   type: object
               type: object
+            rawResultDownloadLink:
+              description: RawResultDownloadLink link to download the raw result file
+                from. Valid for 7 days
+              type: string
             rawResultFile:
               description: RawResultFile Filename of the result file of the scanner.
                 e.g. `nmap-result.xml`

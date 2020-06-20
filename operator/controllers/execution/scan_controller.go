@@ -283,6 +283,25 @@ func (r *ScanReconciler) startScan(scan *executionv1.Scan) error {
 	scan.Status.State = "Scanning"
 	scan.Status.RawResultType = scanType.Spec.ExtractResults.Type
 	scan.Status.RawResultFile = filepath.Base(scanType.Spec.ExtractResults.Location)
+
+	bucketName := os.Getenv("S3_BUCKET")
+
+	reqParams := make(url.Values)
+
+	rawResultDownloadLink, err := r.MinioClient.PresignedGetObject(bucketName, fmt.Sprintf("scan-%s/%s", string(scan.UID), scan.Status.RawResultFile), 7*24*time.Hour, reqParams)
+	if err != nil {
+		log.Error(err, "Failed to create presigned url to download the raw scan resuts from")
+		return err
+	}
+	scan.Status.RawResultDownloadLink = rawResultDownloadLink.String()
+
+	findingsDownloadLink, err := r.MinioClient.PresignedGetObject(bucketName, fmt.Sprintf("scan-%s/findings.json", string(scan.UID)), 7*24*time.Hour, reqParams)
+	if err != nil {
+		log.Error(err, "Failed to create presigned url to download the findings from")
+		return err
+	}
+	scan.Status.FindingDownloadLink = findingsDownloadLink.String()
+
 	if err := r.Status().Update(ctx, scan); err != nil {
 		log.Error(err, "unable to update Scan status")
 		return err

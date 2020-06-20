@@ -3,6 +3,12 @@ const { parse } = require("./parser/parser");
 const uuid = require("uuid/v4");
 const k8s = require("@kubernetes/client-node");
 
+const kc = new k8s.KubeConfig();
+kc.loadFromCluster();
+const k8sApi = kc.makeApiClient(k8s.CustomObjectsApi);
+const scanName = process.env["SCAN_NAME"];
+const namespace = process.env["NAMESPACE"];
+
 function severityCount(findings, severity) {
   return findings.filter(
     ({ severity: findingSeverity }) =>
@@ -11,12 +17,6 @@ function severityCount(findings, severity) {
 }
 
 async function updateScanStatus(findings) {
-  const kc = new k8s.KubeConfig();
-  kc.loadFromCluster();
-  const k8sApi = kc.makeApiClient(k8s.CustomObjectsApi);
-  const scanName = process.env["SCAN_NAME"];
-  const namespace = process.env["NAMESPACE"];
-
   try {
     const findingCategories = new Map();
     for (const { category } of findings) {
@@ -69,9 +69,26 @@ async function main() {
   const { data } = await axios.get(resultFileUrl);
   console.log("Fetched result file");
 
+  console.log("Fetching scan object from kubernetes api");
+  let scan;
+  try {
+    const { body } = await k8sApi.getNamespacedCustomObject(
+      "execution.experimental.securecodebox.io",
+      "v1",
+      namespace,
+      "scans",
+      scanName
+    );
+    scan = body;
+  } catch (err) {
+    console.error("Failed to get Scan from the kubernetes api");
+    console.error(err);
+    process.exit(1);
+  }
+
   let findings = [];
   try {
-    findings = await parse(data);
+    findings = await parse(data, { scan });
   } catch (error) {
     console.error("Parser failed with error:");
     console.error(error);

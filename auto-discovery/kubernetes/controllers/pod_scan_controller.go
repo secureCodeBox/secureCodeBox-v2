@@ -39,9 +39,9 @@ type PodScanReconciler struct {
 	Scheme *runtime.Scheme
 }
 
-// +kubebuilder:rbac:groups=networking,resources=pod,verbs=get;list;watch
-// +kubebuilder:rbac:groups=networking,resources=pod/status,verbs=get
-// +kubebuilder:rbac:groups=networking,resources=secret,verbs=get
+// +kubebuilder:rbac:groups="",resources=pod,verbs=get;list;watch
+// +kubebuilder:rbac:groups="",resources=pod/status,verbs=get
+// +kubebuilder:rbac:groups="",resources=secret,verbs=get
 
 // Reconcile compares the Pod object against the state of the cluster and updates both if needed
 func (r *PodScanReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {

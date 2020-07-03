@@ -7,6 +7,26 @@ metadata:
   name: manager-role
 rules:
 - apiGroups:
+  - ""
+  resources:
+  - pod
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - pod/status
+  verbs:
+  - get
+- apiGroups:
+  - ""
+  resources:
+  - secret
+  verbs:
+  - get
+- apiGroups:
   - networking
   resources:
   - ingress
@@ -18,25 +38,5 @@ rules:
   - networking
   resources:
   - ingress/status
-  verbs:
-  - get
-- apiGroups:
-  - networking
-  resources:
-  - pod
-  verbs:
-  - get
-  - list
-  - watch
-- apiGroups:
-  - networking
-  resources:
-  - pod/status
-  verbs:
-  - get
-- apiGroups:
-  - networking
-  resources:
-  - secret
   verbs:
   - get

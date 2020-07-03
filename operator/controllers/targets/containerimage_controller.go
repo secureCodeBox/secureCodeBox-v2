@@ -62,7 +62,7 @@ type dockerAuthConfig struct {
 // +kubebuilder:rbac:groups=targets.experimental.securecodebox.io,resources=containerimages/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=execution.experimental.securecodebox.io,resources=scheduledscans,verbs=get;list;create
 // +kubebuilder:rbac:groups=execution.experimental.securecodebox.io,resources=scheduledscans/status,verbs=get
-// +kubebuilder:rbac:groups="",resources=secrets,verbs=get
+// +kubebuilder:rbac:groups="",resources=secrets,verbs=get,create,patch,update
 func (r *ContainerImageReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	ctx := context.Background()
 	log := r.Log.WithValues("containerImage", req.NamespacedName)

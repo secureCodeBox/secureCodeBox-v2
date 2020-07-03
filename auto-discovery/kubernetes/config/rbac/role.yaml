@@ -20,3 +20,23 @@ rules:
   - ingress/status
   verbs:
   - get
+- apiGroups:
+  - networking
+  resources:
+  - pod
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - networking
+  resources:
+  - pod/status
+  verbs:
+  - get
+- apiGroups:
+  - networking
+  resources:
+  - secret
+  verbs:
+  - get

@@ -41,8 +41,9 @@ type PodScanReconciler struct {
 	Scheme *runtime.Scheme
 }
 
-// +kubebuilder:rbac:groups=networking,resources=ingress,verbs=get;list;watch
-// +kubebuilder:rbac:groups=networking,resources=ingress/status,verbs=get
+// +kubebuilder:rbac:groups=networking,resources=pod,verbs=get;list;watch
+// +kubebuilder:rbac:groups=networking,resources=pod/status,verbs=get
+// +kubebuilder:rbac:groups=networking,resources=secret,verbs=get
 
 // Reconcile compares the Ingress object against the state of the cluster and updates both if needed
 func (r *PodScanReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {

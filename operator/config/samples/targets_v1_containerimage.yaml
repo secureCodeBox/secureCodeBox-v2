@@ -1,6 +1,8 @@
 apiVersion: targets.experimental.securecodebox.io/v1
 kind: ContainerImage
 metadata:
-  name: juice-shop
+  name: private-test
 spec:
-  image: bkimminich/juice-shop:v10.2.0
+  image: docker.io/j12934/private-test
+  imagePullSecret:
+    name: docker.io

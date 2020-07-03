@@ -45,9 +45,18 @@ spec:
           description: ContainerImageSpec defines the desired state of ContainerImage
           properties:
             image:
-              description: Foo is an example field of ContainerImage. Edit ContainerImage_types.go
-                to remove/update
+              description: Image Reference e.g. docker.io/bkimminich/juice-shop:v11.1.1
               type: string
+            imagePullSecret:
+              description: ImagePullSecret reference to the secret required to Pull
+                the Image. Note in contrast to the imagePullSecrets on Pods only **one**
+                reference is supported.
+              properties:
+                name:
+                  description: 'Name of the referent. More info: https://kubernetes.io/docs/concepts/overview/working-with-objects/names/#names
+                    TODO: Add other useful fields. apiVersion, kind, uid?'
+                  type: string
+              type: object
           type: object
         status:
           description: ContainerImageStatus defines the observed state of ContainerImage

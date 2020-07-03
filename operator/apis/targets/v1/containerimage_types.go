@@ -18,6 +18,7 @@ package v1
 
 import (
 	executionv1 "github.com/secureCodeBox/secureCodeBox-v2-alpha/operator/apis/execution/v1"
+	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -29,8 +30,11 @@ type ContainerImageSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of ContainerImage. Edit ContainerImage_types.go to remove/update
+	// Image Reference e.g. docker.io/bkimminich/juice-shop:v11.1.1
 	Image string `json:"image,omitempty"`
+
+	// ImagePullSecret reference to the secret required to Pull the Image. Note in contrast to the imagePullSecrets on Pods only **one** reference is supported.
+	ImagePullSecret *corev1.LocalObjectReference `json:"imagePullSecret,omitempty"`
 }
 
 // ContainerImageStatus defines the observed state of ContainerImage

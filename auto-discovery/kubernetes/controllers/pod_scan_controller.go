@@ -34,7 +34,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 )
 
-// PodScanReconciler reconciles a DeleteMe object
+// PodScanReconciler reconciles a Pod object
 type PodScanReconciler struct {
 	client.Client
 	Log    logr.Logger
@@ -45,7 +45,7 @@ type PodScanReconciler struct {
 // +kubebuilder:rbac:groups=networking,resources=pod/status,verbs=get
 // +kubebuilder:rbac:groups=networking,resources=secret,verbs=get
 
-// Reconcile compares the Ingress object against the state of the cluster and updates both if needed
+// Reconcile compares the Pod object against the state of the cluster and updates both if needed
 func (r *PodScanReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
 	ctx := context.Background()
 	log := r.Log

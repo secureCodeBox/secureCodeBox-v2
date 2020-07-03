@@ -30,7 +30,7 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-// IngressScanReconciler reconciles a DeleteMe object
+// IngressScanReconciler reconciles a Ingress object
 type IngressScanReconciler struct {
 	client.Client
 	Log    logr.Logger

@@ -28,8 +28,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/event"
-	"sigs.k8s.io/controller-runtime/pkg/predicate"
 )
 
 // IngressScanReconciler reconciles a DeleteMe object
@@ -169,22 +167,8 @@ func (r *IngressScanReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		return err
 	}
 
-	isInDemoNamespaceFilter := predicate.Funcs{
-		CreateFunc: func(event event.CreateEvent) bool {
-			return false
-		},
-		DeleteFunc: func(event event.DeleteEvent) bool {
-			return false
-		},
-		UpdateFunc: func(event event.UpdateEvent) bool {
-			return false
-		},
-		GenericFunc: func(event event.GenericEvent) bool {
-			return false
-		},
-	}
-
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&networking.Ingress{}).WithEventFilter(isInDemoNamespaceFilter).
+		For(&networking.Ingress{}).
+		WithEventFilter(getPredicates(mgr.GetClient(), r.Log)).
 		Complete(r)
 }

@@ -30,8 +30,6 @@ import (
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"sigs.k8s.io/controller-runtime/pkg/event"
-	"sigs.k8s.io/controller-runtime/pkg/predicate"
 )
 
 // PodScanReconciler reconciles a Pod object
@@ -138,35 +136,8 @@ func (r *PodScanReconciler) SetupWithManager(mgr ctrl.Manager) error {
 		return err
 	}
 
-	isInDemoNamespaceFilter := predicate.Funcs{
-		CreateFunc: func(event event.CreateEvent) bool {
-			if val, ok := event.Meta.GetAnnotations()["auto-discovery.experimental.securecodebox.io/ignore"]; ok && val == "true" {
-				return false
-			}
-			return event.Meta.GetNamespace() == "juice-shop" || event.Meta.GetNamespace() == "bodgeit"
-		},
-		DeleteFunc: func(event event.DeleteEvent) bool {
-			if val, ok := event.Meta.GetAnnotations()["auto-discovery.experimental.securecodebox.io/ignore"]; ok && val == "true" {
-				return false
-			}
-			return event.Meta.GetNamespace() == "juice-shop" || event.Meta.GetNamespace() == "bodgeit"
-		},
-		UpdateFunc: func(event event.UpdateEvent) bool {
-			if val, ok := event.MetaNew.GetAnnotations()["auto-discovery.experimental.securecodebox.io/ignore"]; ok && val == "true" {
-				return false
-			}
-			return event.MetaNew.GetNamespace() == "juice-shop" || event.MetaNew.GetNamespace() == "bodgeit"
-		},
-		GenericFunc: func(event event.GenericEvent) bool {
-			if val, ok := event.Meta.GetAnnotations()["auto-discovery.experimental.securecodebox.io/ignore"]; ok && val == "true" {
-				return false
-			}
-			return event.Meta.GetNamespace() == "juice-shop" || event.Meta.GetNamespace() == "bodgeit"
-		},
-	}
-
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&corev1.Pod{}).
-		WithEventFilter(isInDemoNamespaceFilter).
+		WithEventFilter(getPredicates(mgr.GetClient(), r.Log)).
 		Complete(r)
 }

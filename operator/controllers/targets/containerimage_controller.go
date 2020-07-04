@@ -61,6 +61,7 @@ type dockerAuthConfig struct {
 // +kubebuilder:rbac:groups=targets.experimental.securecodebox.io,resources=containerimages/status,verbs=get;update;patch
 // +kubebuilder:rbac:groups=execution.experimental.securecodebox.io,resources=scheduledscans,verbs=get;list;create
 // +kubebuilder:rbac:groups=execution.experimental.securecodebox.io,resources=scheduledscans/status,verbs=get
+// +kubebuilder:rbac:groups="",resources=secrets,verbs=get;create;patch;update
 
 // Reconcile compares the scan object against the state of the cluster and updates both if needed
 func (r *ContainerImageReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {

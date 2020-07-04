@@ -118,6 +118,26 @@ rules:
 - apiGroups:
   - targets.experimental.securecodebox.io
   resources:
+  - containerimages
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - targets.experimental.securecodebox.io
+  resources:
+  - containerimages/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - targets.experimental.securecodebox.io
+  resources:
   - hosts
   verbs:
   - create

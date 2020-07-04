@@ -295,7 +295,7 @@ jobs:
           repository: scbexperimental/kube-hunter
           path: ./scanners/kube-hunter/scanner/
           # Note: not prefixed with a "v" as this matches the aquasec/kube-hunter tags
-          tags: "0.3.0,latest"
+          tags: "v0.3.1,latest"
       - uses: docker/build-push-action@v1
         name: "Build & Push test-scan Scanner Image"
         with:

@@ -14,7 +14,7 @@ spec:
           restartPolicy: Never
           containers:
             - name: kube-hunter
-              image: scbexperimental/kube-hunter:latest
+              image: scbexperimental/kube-hunter:v0.3.1
               command:
                 - 'sh'
                 - '/wrapper.sh'

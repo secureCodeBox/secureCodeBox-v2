@@ -294,7 +294,6 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: scbexperimental/kube-hunter
           path: ./scanners/kube-hunter/scanner/
-          # Note: not prefixed with a "v" as this matches the aquasec/kube-hunter tags
           tags: "v0.3.1,latest"
       - uses: docker/build-push-action@v1
         name: "Build & Push test-scan Scanner Image"
@@ -303,7 +302,6 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: scbexperimental/test-scan
           path: ./scanners/test-scan/scanner/
-          # Note: not prefixed with a "v" as this seems to match nmap versioning standards
           tags: "latest"
   integrationTests:
     name: "Test / Integration / k8s ${{ matrix.k8sVersion }}"

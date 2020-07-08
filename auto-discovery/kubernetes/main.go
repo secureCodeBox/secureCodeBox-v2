@@ -28,6 +28,7 @@ import (
 
 	"github.com/secureCodeBox/secureCodeBox-v2-alpha/auto-discovery/kubernetes/controllers"
 
+	executionv1 "github.com/secureCodeBox/secureCodeBox-v2-alpha/operator/apis/execution/v1"
 	targetsv1 "github.com/secureCodeBox/secureCodeBox-v2-alpha/operator/apis/targets/v1"
 	// +kubebuilder:scaffold:imports
 )
@@ -41,6 +42,7 @@ func init() {
 	_ = clientgoscheme.AddToScheme(scheme)
 
 	_ = targetsv1.AddToScheme(scheme)
+	_ = executionv1.AddToScheme(scheme)
 
 	// +kubebuilder:scaffold:scheme
 }
@@ -73,7 +75,7 @@ func main() {
 		Log:    ctrl.Log.WithName("controllers").WithName("IngressScanController"),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "DeleteMe")
+		setupLog.Error(err, "unable to create controller", "controller", "IngressScanController")
 		os.Exit(1)
 	}
 	if err = (&controllers.PodScanReconciler{
@@ -81,7 +83,15 @@ func main() {
 		Log:    ctrl.Log.WithName("controllers").WithName("PodScanController"),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "DeleteMe")
+		setupLog.Error(err, "unable to create controller", "controller", "PodScanController")
+		os.Exit(1)
+	}
+	if err = (&controllers.NamespaceScanReconciler{
+		Client: mgr.GetClient(),
+		Log:    ctrl.Log.WithName("controllers").WithName("NamespaceScanController"),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "NamespaceScanController")
 		os.Exit(1)
 	}
 	// +kubebuilder:scaffold:builder

@@ -9,6 +9,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/predicate"
 
 	corev1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+
+	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/types"
 )
 
@@ -22,6 +25,15 @@ func getNamespace(client client.Client, name string) (*corev1.Namespace, error) 
 	return &namespace, nil
 }
 
+func getNamespaceName(object runtime.Object, meta metav1.Object) string {
+	if meta.GetNamespace() == "" {
+		// The Object is not namespaced...
+		return meta.GetName()
+	}
+
+	return meta.GetNamespace()
+}
+
 func getPredicates(client client.Client, log logr.Logger) predicate.Predicate {
 
 	return predicate.Funcs{
@@ -30,7 +42,7 @@ func getPredicates(client client.Client, log logr.Logger) predicate.Predicate {
 				return false
 			}
 
-			namespace, err := getNamespace(client, event.Meta.GetNamespace())
+			namespace, err := getNamespace(client, getNamespaceName(event.Object, event.Meta))
 			if err != nil {
 				log.Error(err, "Failed to get Namespace")
 			}
@@ -45,7 +57,7 @@ func getPredicates(client client.Client, log logr.Logger) predicate.Predicate {
 				return false
 			}
 
-			namespace, err := getNamespace(client, event.Meta.GetNamespace())
+			namespace, err := getNamespace(client, getNamespaceName(event.Object, event.Meta))
 			if err != nil {
 				log.Error(err, "Failed to get Namespace")
 			}
@@ -60,7 +72,7 @@ func getPredicates(client client.Client, log logr.Logger) predicate.Predicate {
 				return false
 			}
 
-			namespace, err := getNamespace(client, event.MetaNew.GetNamespace())
+			namespace, err := getNamespace(client, getNamespaceName(event.ObjectNew, event.MetaNew))
 			if err != nil {
 				log.Error(err, "Failed to get Namespace")
 			}
@@ -75,7 +87,7 @@ func getPredicates(client client.Client, log logr.Logger) predicate.Predicate {
 				return false
 			}
 
-			namespace, err := getNamespace(client, event.Meta.GetNamespace())
+			namespace, err := getNamespace(client, getNamespaceName(event.Object, event.Meta))
 			if err != nil {
 				log.Error(err, "Failed to get Namespace")
 			}

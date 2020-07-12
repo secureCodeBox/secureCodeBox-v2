@@ -27,6 +27,20 @@ rules:
   verbs:
   - get
 - apiGroups:
+  - ""
+  resources:
+  - service
+  verbs:
+  - get
+  - list
+  - watch
+- apiGroups:
+  - ""
+  resources:
+  - service/status
+  verbs:
+  - get
+- apiGroups:
   - networking
   resources:
   - ingress

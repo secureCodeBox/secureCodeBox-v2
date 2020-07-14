@@ -176,14 +176,33 @@ func CreateScanTemplatesForHost(host targetsv1.Host) []ScanTemplates {
 			})
 		}
 		if port.Type == "http" || port.Type == "https" {
-			scanTemplates = append(scanTemplates, ScanTemplates{
-				Port: port.Port,
-				Type: port.Type,
-				ScanSpec: executionv1.ScanSpec{
-					ScanType:   "zap-baseline",
-					Parameters: []string{"-t", fmt.Sprintf("%s://%s:%d", port.Type, host.Spec.Hostname, port.Port)},
-				},
-			})
+			args := []string{}
+
+			if val, ok := host.Labels["zap-hints.auto-discovery.experimental.securecodebox.io/spider"]; ok && val == "ajax" {
+				args = append(args, "-j")
+			}
+
+			if val, ok := host.Labels["invasive-scans.auto-discovery.experimental.securecodebox.io"]; ok && val == "true" {
+				args = append(args, "-m", "3")
+
+				scanTemplates = append(scanTemplates, ScanTemplates{
+					Port: port.Port,
+					Type: port.Type,
+					ScanSpec: executionv1.ScanSpec{
+						ScanType:   "zap-full-scan",
+						Parameters: append(args, "-t", fmt.Sprintf("%s://%s:%d", port.Type, host.Spec.Hostname, port.Port)),
+					},
+				})
+			} else {
+				scanTemplates = append(scanTemplates, ScanTemplates{
+					Port: port.Port,
+					Type: port.Type,
+					ScanSpec: executionv1.ScanSpec{
+						ScanType:   "zap-baseline",
+						Parameters: append(args, "-t", fmt.Sprintf("%s://%s:%d", port.Type, host.Spec.Hostname, port.Port)),
+					},
+				})
+			}
 		}
 		if port.Type == "http" || port.Type == "https" {
 			scanTemplates = append(scanTemplates, ScanTemplates{

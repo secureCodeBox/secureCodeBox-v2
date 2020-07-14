@@ -121,20 +121,30 @@ func (r *ServiceScanReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error)
 		}, nil
 	}
 
+	inavasiveScans := "false"
+	if val, ok := service.Labels["invasive-scans.auto-discovery.experimental.securecodebox.io"]; ok && val == "true" {
+		inavasiveScans = "true"
+	}
+
 	// No scan for this pod digest yet. Scanning now
 
 	host := targetsv1.Host{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      fmt.Sprintf("%s-service-%s", service.Name, podDigest[:min(len(podDigest), 10)]),
-			Namespace: service.Namespace,
+			GenerateName: fmt.Sprintf("%s-service-%s", service.Name, podDigest[:min(len(podDigest), 10)]),
+			Namespace:    service.Namespace,
 			Labels: map[string]string{
-				"digest.auto-discovery.experimental.securecodebox.io": podDigest[0:min(len(podDigest), 63)],
+				"digest.auto-discovery.experimental.securecodebox.io":         podDigest[0:min(len(podDigest), 63)],
+				"invasive-scans.auto-discovery.experimental.securecodebox.io": inavasiveScans,
 			},
 		},
 		Spec: targetsv1.HostSpec{
 			Hostname: fmt.Sprintf("%s.%s.svc", service.Name, service.Namespace),
 			Ports:    getHostPorts(service),
 		},
+	}
+
+	if val, ok := service.Labels["zap-hints.auto-discovery.experimental.securecodebox.io/spider"]; ok {
+		host.Labels["zap-hints.auto-discovery.experimental.securecodebox.io/spider"] = val
 	}
 
 	err := r.Create(ctx, &host)

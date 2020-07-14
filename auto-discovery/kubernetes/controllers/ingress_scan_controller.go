@@ -88,7 +88,21 @@ func (r *IngressScanReconciler) createOrUpdateTLSForHosts(ingress networking.Ing
 			)
 			r.Log.Info("Listed hosts", "Length", len(hostTargets.Items))
 
-			host := targetsv1.Host{}
+			host := targetsv1.Host{
+				ObjectMeta: metav1.ObjectMeta{
+					Labels: map[string]string{
+						"invasive-scans.auto-discovery.experimental.securecodebox.io": "false",
+					},
+				},
+			}
+
+			if val, ok := ingress.Labels["invasive-scans.auto-discovery.experimental.securecodebox.io"]; ok && val == "true" {
+				host.Labels["invasive-scans.auto-discovery.experimental.securecodebox.io"] = "true"
+			}
+
+			if val, ok := ingress.Labels["zap-hints.auto-discovery.experimental.securecodebox.io/spider"]; ok {
+				host.Labels["zap-hints.auto-discovery.experimental.securecodebox.io/spider"] = val
+			}
 
 			found := false
 			// Check if the ingress has a child Host with a matching Hostname
@@ -101,7 +115,7 @@ func (r *IngressScanReconciler) createOrUpdateTLSForHosts(ingress networking.Ing
 				}
 			}
 			if found == false {
-				host.GenerateName = fmt.Sprintf("%s-", ingress.Name)
+				host.GenerateName = fmt.Sprintf("%s-ingress-", ingress.Name)
 				host.Namespace = ingress.Namespace
 				host.Spec.Hostname = hostname
 				host.Spec.Ports = make([]targetsv1.HostPort, 0)

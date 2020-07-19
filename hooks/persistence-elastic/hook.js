@@ -39,6 +39,7 @@ async function handle({
   now = new Date(),
   tenant = process.env["NAMESPACE"],
   indexPrefix = process.env["ELASTICSEARCH_INDEX_PREFIX"] || "scbv2",
+  context = process.env["ELASTICSEARCH_DOCUMENT_CONTEXT"],
 }) {
   const findings = await getFindings();
 
@@ -60,6 +61,7 @@ async function handle({
 
   const findingsChunks = chunk(findings, 50);
 
+  // Create "Scan" Finding
   await client.index({
     index: indexName,
     body: {
@@ -70,6 +72,7 @@ async function handle({
       scan_type: scan.spec.scanType,
       parameters: scan.spec.parameters,
       labels: scan.metadata.labels || {},
+      context,
     },
   });
 
@@ -93,6 +96,7 @@ async function handle({
         scan_name: scan.metadata.name,
         scan_type: scan.spec.scanType,
         scan_labels: scan.metadata.labels || {},
+        context,
       },
     ]);
 

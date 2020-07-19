@@ -26,7 +26,13 @@ test("should only send scan summary document if no findings are passing in", asy
 
   const now = new Date();
 
-  await handle({ getFindings, scan, now, tenant: "default" });
+  await handle({
+    getFindings,
+    scan,
+    now,
+    tenant: "default",
+    context: "juice-shop",
+  });
 
   expect(elasticClient.index).toBeCalledTimes(1);
   expect(elasticClient.index).toBeCalledWith({
@@ -40,6 +46,7 @@ test("should only send scan summary document if no findings are passing in", asy
       parameters: ["-Pn", "localhost"],
       scan_type: "Nmap",
       type: "scan",
+      context: "juice-shop",
     },
     index: `scbv2_default_${now.toISOString().substr(0, 10)}`,
   });
@@ -73,7 +80,13 @@ test("should send findings to elasticsearch", async () => {
 
   const now = new Date();
 
-  await handle({ getFindings, scan, now, tenant: "default" });
+  await handle({
+    getFindings,
+    scan,
+    now,
+    tenant: "default",
+    context: "juice-shop",
+  });
 
   expect(elasticClient.index).toBeCalledTimes(1);
   expect(elasticClient.index).toBeCalledWith({
@@ -87,6 +100,7 @@ test("should send findings to elasticsearch", async () => {
       parameters: ["-Pn", "localhost"],
       scan_type: "Nmap",
       type: "scan",
+      context: "juice-shop",
     },
     index: `scbv2_default_${now.toISOString().substr(0, 10)}`,
   });
@@ -112,6 +126,7 @@ test("should send findings to elasticsearch", async () => {
         scan_name: "demo-scan",
         scan_type: "Nmap",
         type: "finding",
+        context: "juice-shop",
       },
     ],
   });

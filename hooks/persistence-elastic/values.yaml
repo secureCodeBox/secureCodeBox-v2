@@ -10,6 +10,10 @@ image:
 
 indexPrefix: "scbv2"
 
+# Adds a additional "context" attribute to better be able to track where the finding originated
+# Defaults to the Releases Namespace if not set.
+context: null
+
 # Enable this when you already have an Elastic Stack running to which you want to send your results
 externalElasticStack:
   enabled: false

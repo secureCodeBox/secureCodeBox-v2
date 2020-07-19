@@ -15,6 +15,15 @@ spec:
   env:
     - name: ELASTICSEARCH_INDEX_PREFIX
       value: {{ .Values.indexPrefix | quote }}
+{{- if .Values.context }}
+    - name: ELASTICSEARCH_DOCUMENT_CONTEXT
+      value: {{ .Values.context }}
+{{- else }}
+    - name: ELASTICSEARCH_DOCUMENT_CONTEXT
+      valueFrom:
+        fieldRef:
+          fieldPath: metadata.namespace
+{{- end }}
 {{- if .Values.externalElasticStack.enabled }}
     - name: ELASTICSEARCH_ADDRESS
       value: {{ .Values.externalElasticStack.elasticsearchAddress | quote }}

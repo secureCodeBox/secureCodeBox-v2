@@ -1,0 +1,25 @@
+apiVersion: "execution.experimental.securecodebox.io/v1"
+kind: ScanType
+metadata:
+  name: "kubeaudit"
+spec:
+  extractResults:
+    type: kubeaudit-jsonl
+    location: "/home/securecodebox/kubeaudit.jsonl"
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 10
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: kubeaudit
+              image: j12934/kubeaudit:test
+              command:
+                - "sh"
+                - "/wrapper.sh"
+                - "all"
+                - "--json"
+              resources:
+                {{- toYaml .Values.scannerJob.resources | nindent 16 }}
+          serviceAccountName: kubeaudit

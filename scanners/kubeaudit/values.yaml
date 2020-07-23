@@ -1,0 +1,8 @@
+parserImage:
+  registry: docker.io
+  repository: scbexperimental/parser-kubeaudit
+  # todo change to latest
+  tag: auto-discovery
+
+scannerJob:
+  resources: {}

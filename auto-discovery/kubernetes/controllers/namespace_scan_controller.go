@@ -46,40 +46,53 @@ type NamespaceScanReconciler struct {
 
 // Reconcile compares the Ingress object against the state of the cluster and updates both if needed
 func (r *NamespaceScanReconciler) Reconcile(req ctrl.Request) (ctrl.Result, error) {
-	ctx := context.Background()
 	log := r.Log
 
 	log.Info("Something happened to a namespace", "namespace", req.Name)
 
+	if err := r.createScanIfNotExisting("kube-hunter", req.Name, []string{"--pod"}); err != nil {
+		log.Error(err, "Failed to create kube-hunter Scan")
+	}
+
+	if err := r.createScanIfNotExisting("kubeaudit", req.Name, []string{"--namespace", req.Name}); err != nil {
+		log.Error(err, "Failed to create kube-hunter Scan")
+	}
+
+	return ctrl.Result{}, nil
+}
+
+func (r *NamespaceScanReconciler) createScanIfNotExisting(scanType, namespace string, params []string) error {
+	ctx := context.Background()
+
+	name := fmt.Sprintf("%s-%s", scanType, namespace)
+
 	scan := executionv1.ScheduledScan{}
-	err := r.Get(ctx, types.NamespacedName{Name: fmt.Sprintf("kube-hunter-%s", req.Name), Namespace: req.Name}, &scan)
+	err := r.Get(ctx, types.NamespacedName{Name: name, Namespace: namespace}, &scan)
 	if !apierrors.IsNotFound(err) {
 		// Already exists, or errored
-		return ctrl.Result{}, err
+		return err
 	}
 
 	scan = executionv1.ScheduledScan{
 		ObjectMeta: metav1.ObjectMeta{
-			Name:      fmt.Sprintf("kube-hunter-%s", req.Name),
-			Namespace: req.Name,
+			Name:      name,
+			Namespace: namespace,
 		},
 		Spec: executionv1.ScheduledScanSpec{
 			Interval:     metav1.Duration{Duration: 7 * 24 * time.Hour},
 			HistoryLimit: 1,
 			ScanSpec: &executionv1.ScanSpec{
-				ScanType:   "kube-hunter",
-				Parameters: []string{"--pod"},
+				ScanType:   scanType,
+				Parameters: params,
 			},
 		},
 	}
-
 	err = r.Create(ctx, &scan)
 	if err != nil {
-		log.Error(err, "Failed to create kube-hunter scan")
-		return ctrl.Result{}, err
+		return err
 	}
 
-	return ctrl.Result{}, nil
+	return nil
 }
 
 // SetupWithManager sets up the controller and initializes every thing it needs

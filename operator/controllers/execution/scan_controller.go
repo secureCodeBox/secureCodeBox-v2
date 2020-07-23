@@ -543,7 +543,10 @@ func (r *ScanReconciler) constructJobForScan(scan *executionv1.Scan, scanType *e
 	podAnnotations["auto-discovery.experimental.securecodebox.io/ignore"] = "true"
 	job.Spec.Template.Annotations = podAnnotations
 
-	job.Spec.Template.Spec.ServiceAccountName = "lurcher"
+	// Only use lurcher serviceAccount if it is note already specified by the scanType
+	if job.Spec.Template.Spec.ServiceAccountName == "" {
+		job.Spec.Template.Spec.ServiceAccountName = "lurcher"
+	}
 
 	// merging volume definition from ScanType (if existing) with standard results volume
 	if job.Spec.Template.Spec.Containers[0].VolumeMounts == nil || len(job.Spec.Template.Spec.Containers[0].VolumeMounts) == 0 {

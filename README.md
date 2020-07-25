@@ -87,6 +87,7 @@ Optionally deploy SCB scanner charts for each security scanner you want to use. 
 ```bash
 helm upgrade --install amass ./scanners/amass/
 helm upgrade --install kube-hunter ./scanners/kube-hunter/
+helm upgrade --install kubeaudit ./scanners/kubeaudit/
 helm upgrade --install nikto ./scanners/nikto
 helm upgrade --install nmap ./scanners/nmap/
 helm upgrade --install ssh-scan ./scanners/ssh_scan/

@@ -183,7 +183,10 @@ func CreateScanTemplatesForHost(host targetsv1.Host) []ScanTemplates {
 			}
 
 			if val, ok := host.Labels["invasive-scans.auto-discovery.experimental.securecodebox.io"]; ok && val == "true" {
-				args = append(args, "-m", "3")
+				// Spider for 5 minutes
+				args = append(args, "-m", "5")
+				// include the alpha active and passive scan rules as well
+				args = append(args, "-a")
 
 				scanTemplates = append(scanTemplates, ScanTemplates{
 					Port: port.Port,

@@ -14,13 +14,9 @@ spec:
           restartPolicy: OnFailure
           containers:
             - name: screenshooter
-              image: j12934/gowitness
+              image: j12934/firefox:79
               command:
                 - "sh"
-                - "/wrapper.sh"
-                - "single"
-                - "--disable-db"
-                - "--destination"
-                - "/home/securecodebox/"
-                - "--output"
-                - "screenshot.png"
+                - "wrapper.sh"
+                - "-screenshot"
+                - "/home/securecodebox/screenshot.png"

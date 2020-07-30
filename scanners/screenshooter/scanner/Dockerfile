@@ -1,3 +1,5 @@
-FROM j12934/gowitness:base
-COPY wrapper.sh /wrapper.sh
-ENTRYPOINT [ "sh", "/wrapper.sh" ]
+# This is using ubuntu rather than alpine, as firefox on alpine seems to be missing some crucial fonts. This lets the screenshots taken on alpine look weird
+FROM ubuntu
+RUN apt-get update && apt-get install firefox -y
+COPY wrapper.sh ./
+CMD ["sh","wrapper.sh"]

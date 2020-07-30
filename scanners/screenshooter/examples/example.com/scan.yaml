@@ -5,5 +5,4 @@ metadata:
 spec:
   scanType: "screenshooter"
   parameters:
-    - "--url"
     - "http://example.com"

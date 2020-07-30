@@ -7,5 +7,4 @@ metadata:
 spec:
   scanType: "screenshooter"
   parameters:
-    - "--url"
     - "https://www.securecodebox.io"

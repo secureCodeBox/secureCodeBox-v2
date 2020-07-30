@@ -10,7 +10,7 @@ jobs:
         run: ls
       - name: "Install npm dependencies in all parser sub projects"
         run: |
-          for dir in scanner/*/parser/
+          for dir in scanners/*/parser/
           do
               cd $dir
               if [ -f package.json ] && [ -f package-lock.json ]; then
@@ -35,14 +35,21 @@ jobs:
       - name: "Install npm test dependencies"
         run: |
           npm ci
-          cd scanner/
+          cd scanners/
           npm ci
           cd -
           cd hooks/
           npm ci
-      - name: "Run tests"
+      - name: "Compile Typescript"
         run: |
-          npm test -- --ci --colors --coverage
+          cd hooks/declarative-subsequent-scans
+          npm run build
+      - name: "Run tests & publish code coverage"
+        uses: paambaati/codeclimate-action@v2.6.0
+        env:
+          CC_TEST_REPORTER_ID: 80b305e484240da8cecbd1d017dfb365d3ee7f4508b5ed8fd9e9348efd286406
+        with:
+          coverageCommand: npm test -- --ci --colors --coverage
   operator:
     name: "Build / Operator"
     runs-on: ubuntu-latest
@@ -110,7 +117,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: scbexperimental/parser-amass
-          path: ./scanner/amass/parser/
+          path: ./scanners/amass/parser/
           tag_with_ref: true
           tag_with_sha: true
           build_args: baseImageTag=ci-local
@@ -120,7 +127,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: scbexperimental/parser-kube-hunter
-          path: ./scanner/kube-hunter/parser/
+          path: ./scanners/kube-hunter/parser/
           tag_with_ref: true
           tag_with_sha: true
           build_args: baseImageTag=ci-local
@@ -130,7 +137,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: scbexperimental/parser-nikto
-          path: ./scanner/nikto/parser/
+          path: ./scanners/nikto/parser/
           tag_with_ref: true
           tag_with_sha: true
           build_args: baseImageTag=ci-local
@@ -140,7 +147,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: scbexperimental/parser-nmap
-          path: ./scanner/nmap/parser/
+          path: ./scanners/nmap/parser/
           tag_with_ref: true
           tag_with_sha: true
           build_args: baseImageTag=ci-local
@@ -150,7 +157,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: scbexperimental/parser-ssh-scan
-          path: ./scanner/ssh_scan/parser/
+          path: ./scanners/ssh_scan/parser/
           tag_with_ref: true
           tag_with_sha: true
           build_args: baseImageTag=ci-local
@@ -160,7 +167,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: scbexperimental/parser-sslyze
-          path: ./scanner/sslyze/parser/
+          path: ./scanners/sslyze/parser/
           tag_with_ref: true
           tag_with_sha: true
           build_args: baseImageTag=ci-local
@@ -170,7 +177,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: scbexperimental/parser-test-scan
-          path: ./scanner/test-scan/parser/
+          path: ./scanners/test-scan/parser/
           tag_with_ref: true
           tag_with_sha: true
           build_args: baseImageTag=ci-local
@@ -180,7 +187,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: scbexperimental/parser-trivy
-          path: ./scanner/trivy/parser/
+          path: ./scanners/trivy/parser/
           tag_with_ref: true
           tag_with_sha: true
           build_args: baseImageTag=ci-local
@@ -190,7 +197,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: scbexperimental/parser-zap
-          path: ./scanner/zap/parser/
+          path: ./scanners/zap/parser/
           tag_with_ref: true
           tag_with_sha: true
           build_args: baseImageTag=ci-local
@@ -246,6 +253,16 @@ jobs:
           tag_with_ref: true
           build_args: baseImageTag=ci-local
       - uses: docker/build-push-action@v1
+        name: "Build & Push DeclarativeSubsequentScans Hook Image"
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: scbexperimental/hook-declarative-subsequent-scans
+          path: ./hooks/declarative-subsequent-scans/
+          tag_with_ref: true
+          tag_with_sha: true
+          build_args: baseImageTag=ci-local
+      - uses: docker/build-push-action@v1
         name: "Build & Push UpdateField Hook Image"
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
@@ -267,16 +284,16 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: scbexperimental/nmap
-          path: ./scanner/nmap/scanner/
+          path: ./scanners/nmap/scanner/
           # Note: not prefixed with a "v" as this seems to match nmap versioning standards
-          tags: "7.80,7.80-1,latest"
+          tags: "7.80,7.80-2,latest"
       - uses: docker/build-push-action@v1
         name: "Build & Push kube-hunter Scanner Image"
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: scbexperimental/kube-hunter
-          path: ./scanner/kube-hunter/scanner/
+          path: ./scanners/kube-hunter/scanner/
           # Note: not prefixed with a "v" as this matches the aquasec/kube-hunter tags
           tags: "0.3.0,latest"
       - uses: docker/build-push-action@v1
@@ -285,7 +302,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
           repository: scbexperimental/test-scan
-          path: ./scanner/test-scan/scanner/
+          path: ./scanners/test-scan/scanner/
           # Note: not prefixed with a "v" as this seems to match nmap versioning standards
           tags: "latest"
   integrationTests:
@@ -299,7 +316,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        k8sVersion: ["1.18.2", "1.17.5", "1.16.9", "1.15.11"]
+        k8sVersion: ["1.18.6", "1.17.5", "1.16.9", "1.15.11"]
     steps:
       - uses: actions/checkout@master
       - name: "Start kind cluster"
@@ -316,7 +333,7 @@ jobs:
 
           # Operator Namespace
           kubectl create namespace securecodebox-system
-          # Install Operator using the images of the current commit 
+          # Install Operator using the images of the current commit
           helm -n securecodebox-system install securecodebox-operator ./operator/ --wait \
             --set="image.tag=sha-$(git rev-parse --short HEAD)" \
             --set="image.digest=null" \
@@ -334,14 +351,14 @@ jobs:
         run: "kubectl create namespace demo-apps"
       - name: "Install Test Dependencies"
         run: |
-          cd tests/integration/ 
+          cd tests/integration/
           npm ci
       # This steps should include Integration tests which are not related to a Specific Scanner
       - name: "Throws NoScanDefiniton Error Integration Tests"
         run: |
           cd tests/integration/
           npx jest --ci --color no-scan-definition-error
-      - name: "Hooks Integration Tests"
+      - name: "Hooks (ReadAndWrite) Integration Tests"
         run: |
           helm -n integration-tests install update-category ./hooks/update-field/ \
             --set="image.tag=sha-$(git rev-parse --short HEAD)" \
@@ -351,23 +368,31 @@ jobs:
             --set="image.tag=sha-$(git rev-parse --short HEAD)" \
             --set="attribute.name=severity" \
             --set="attribute.value=high"
-          helm -n integration-tests install test-scan ./scanner/test-scan/ --set="parserImage.tag=sha-$(git rev-parse --short HEAD)"
+          helm -n integration-tests install test-scan ./scanners/test-scan/ --set="parserImage.tag=sha-$(git rev-parse --short HEAD)"
           cd tests/integration/
           npx jest --ci --color read-write-hook
           helm -n integration-tests uninstall test-scan update-category update-severity
+      - name: "Hooks (ReadOnly) Integration Tests"
+        run: |
+          helm -n integration-tests install test-scan ./scanners/test-scan/ --set="parserImage.tag=sha-$(git rev-parse --short HEAD)"
+          helm -n integration-tests install http-webhook ./demo-apps/http-webhook
+          helm -n integration-tests install ro-hook ./hooks/generic-webhook/ --set="webhookUrl=http://http-webhook/hallo-welt"
+          cd tests/integration/
+          npx jest --ci --color read-only-hook
+          helm -n integration-tests uninstall test-scan http-webhook ro-hook
       - name: "nmap Integration Tests"
         run: |
-          helm -n integration-tests install nmap ./scanner/nmap/ --set="parserImage.tag=sha-$(git rev-parse --short HEAD)"
+          helm -n integration-tests install nmap ./scanners/nmap/ --set="parserImage.tag=sha-$(git rev-parse --short HEAD)"
           cd tests/integration/
           npx jest --ci --color nmap
       - name: "kube-hunter Integration Tests"
         run: |
-          helm -n integration-tests install kube-hunter ./scanner/kube-hunter/ --set="parserImage.tag=sha-$(git rev-parse --short HEAD)"
+          helm -n integration-tests install kube-hunter ./scanners/kube-hunter/ --set="parserImage.tag=sha-$(git rev-parse --short HEAD)"
           cd tests/integration/
           npx jest --ci --color kube-hunter
       - name: "ssh-scan Integration Tests"
         run: |
-          helm -n integration-tests install ssh-scan ./scanner/ssh_scan/ --set="parserImage.tag=sha-$(git rev-parse --short HEAD)"
+          helm -n integration-tests install ssh-scan ./scanners/ssh_scan/ --set="parserImage.tag=sha-$(git rev-parse --short HEAD)"
           # Install dummy-ssh app
           helm -n demo-apps install dummy-ssh ./demo-apps/dummy-ssh/ --wait
           cd tests/integration/

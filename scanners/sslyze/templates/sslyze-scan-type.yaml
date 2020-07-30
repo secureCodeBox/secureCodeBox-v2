@@ -1,0 +1,23 @@
+apiVersion: 'execution.experimental.securecodebox.io/v1'
+kind: ScanType
+metadata:
+  name: 'sslyze'
+spec:
+  extractResults:
+    type: sslyze-json
+    location: '/home/securecodebox/sslyze-results.json'
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 10
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+            - name: sslyze
+              image: nablac0d3/sslyze@sha256:ff2c5c626401b1961736a5b2ae6e35a41d213e8b2712102100abf5ee46dcca71
+              command:
+                - 'sslyze'
+                - '--json_out'
+                - '/home/securecodebox/sslyze-results.json'
+              resources:
+                {{- toYaml .Values.scannerJob.resources | nindent 16 }}

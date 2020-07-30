@@ -1,0 +1,7 @@
+parserImage:
+  registry: docker.io
+  repository: scbexperimental/parser-sslyze
+  tag: latest
+
+scannerJob:
+  resources: {}

@@ -1,0 +1,26 @@
+apiVersion: 'execution.experimental.securecodebox.io/v1'
+kind: ScanType
+metadata:
+  name: 'nikto'
+spec:
+  extractResults:
+    type: nikto-json
+    location: '/home/securecodebox/nikto-results.json'
+  jobTemplate:
+    spec:
+      ttlSecondsAfterFinished: 10
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: nikto
+              image: scbexperimental/nikto:latest
+              command:
+                # Nikto Entrypoint Script to avoid problems nikto exiting with a non zero exit code
+                # This would cause the kubernetes job to fail no matter what
+                - 'sh'
+                - '/wrapper.sh'
+                - '-o'
+                - '/home/securecodebox/nikto-results.json'
+              resources:
+                {{- toYaml .Values.scannerJob.resources | nindent 16 }}

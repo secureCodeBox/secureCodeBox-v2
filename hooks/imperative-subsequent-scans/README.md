@@ -1,6 +1,5 @@
 ---
 title: "Imperative  Scans"
-path: "hooks/imperative-subsequent-scans"
 category: "hook"
 type: "integration"
 state: "roadmap"

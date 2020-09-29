@@ -1,6 +1,5 @@
 ---
 title: "Developer Guide"
-path: "docs/developer-guide"
 category: "develop"
 ---
 

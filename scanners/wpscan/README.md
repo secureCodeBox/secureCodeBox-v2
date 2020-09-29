@@ -1,6 +1,5 @@
 ---
 title: 'WPScan'
-path: 'scanners/wpscan'
 category: 'scanner'
 type: "CMS"
 state: "released"

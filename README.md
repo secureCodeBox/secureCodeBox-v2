@@ -1,3 +1,5 @@
+This Repo has been archived. The code for the secureCodeBox v2 is now located in the primary https://github.com/secureCodeBox/secureCodeBox repository 🎉.
+
 # secureCodeBox – v2 Beta
 
 <p align="center">
